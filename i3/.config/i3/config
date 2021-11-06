@@ -182,33 +182,6 @@ bindsym $mod+r mode "resize"
 bindsym XF86MonBrightnessUp exec xbacklight -A 20 # increase screen brightness
 bindsym XF86MonBrightnessDown exec xbacklight -U 20 # decrease screen brightnes
 	
-# Color scheme definition
-#set $base03 "#002b3666"
-#set $base02 "#073642"
-#set $base01 "#586e75"
-#set $base00 "#657b83"
-#set $base0 "#839496"
-#set $orange "#cb4b16"
-#set $blue "#268bd2"
-#set $violet "#6c71c4"
-
-# Start i3bar to display a workspace bar (plus the system information i3status
-# finds out, if available)
-#bar {
-#	i3bar_command i3bar --transparency
-#	font pango:DejaVu Sans Mono for Powerline, FontAwesome 10
-#	tray_output none
-#	status_command ~/.local/bin/bumblebee-status -m battery brightness cmus cpu2 datetime nic pasink indicator -t solarized-powerline -p battery.compact-devices=true cpu2.layout="cpu2.cpuload cpu2.coreload" cpu2.colored=1 datetime.format="%Y-%m-%d | %H:%M" nic.exclude="lo,virbr,docker,enp1s0,vboxnet,veth,br,.*:avahi" traffic.states="up" traffic.showname=false nic.format="{intf} {state} {ip}" 
-
-
-#	colors {
-#		background $base03
-#
-#		focused_workspace $base00 $violet $base03
-#
-#
-#	}
-#}
 
 exec_always ~/.config/polybar/launch.sh
 
@@ -218,7 +191,6 @@ exec_always ~/.config/polybar/launch.sh
 for_window [class=".*"] border pixel 0
 
 smart_borders on
-gaps outer 3
 gaps inner 3
 
 smart_gaps on
@@ -229,10 +201,10 @@ exec picom
 
 # Autostart
 assign [class="xterm"] $ws1
-assign [class="Terminal"] $ws1
+assign [class="Alacritty"] $ws1
 assign [class="Emacs"] $ws2
 assign [class="Firefox"] $ws3
 
-exec gnome-terminal
+exec alacritty
 exec emacs
 
