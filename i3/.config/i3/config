@@ -181,7 +181,12 @@ bindsym $mod+r mode "resize"
 # Screen brightness controls
 bindsym XF86MonBrightnessUp exec xbacklight -A 20 # increase screen brightness
 bindsym XF86MonBrightnessDown exec xbacklight -U 20 # decrease screen brightnes
-	
+
+
+# Print screen
+bindsym Print exec gnome-screenshot
+bindsym $mod+Print exec gnome-screenshot -w
+bindsym $mod+Shift+Print exec gnome-screenshot -a
 
 exec_always ~/.config/polybar/launch.sh
 
