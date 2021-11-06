@@ -1,0 +1,22 @@
+emacs/*/session.*
+emacs/*/.*
+
+*.elc
+
+
+# Files inside my emacs diretory that can be regenerated
+emacs/.emacs.d/#recentf#
+emacs/.emacs.d/auto-save-list/
+emacs/.emacs.d/backup/
+emacs/.emacs.d/elpa/
+emacs/.emacs.d/eshell/
+emacs/.emacs.d/forge-database.sqlite
+emacs/.emacs.d/ido.last
+emacs/.emacs.d/irony/
+emacs/.emacs.d/projectile-bookmarks.eld
+emacs/.emacs.d/projectile.cache
+emacs/.emacs.d/recentf
+emacs/.emacs.d/snippets/
+emacs/.emacs.d/tramp
+emacs/.emacs.d/transient/
+emacs/.emacs.d/url/
