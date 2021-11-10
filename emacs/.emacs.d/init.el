@@ -142,7 +142,7 @@ static char *gnus-pointer[] = {
    '("#fb4933" "#d65d0e" "#d79921" "#747400" "#b9b340" "#14676b" "#689d6a" "#d3869b" "#b16286"))
  '(org-agenda-files '("~/projects/plan-familyline.org"))
  '(package-selected-packages
-   '(which-key ido-grid-mode ido-completing-read+ csharp-mode hl-todo eldoc eldoc-cmake yasnippet web-mode use-package lsp-mode flatbuffers-mode lsp-ui alect-themes rainbow-delimiters forge magit-lfs xah-lookup cider clojure-mode rjsx-mode smart-mode-line lsp-clangd company-lsp smart-tabs-mode gruvbox-theme spacemacs-theme smartparens sr-speedbar undo-tree solarized-theme tide jsx-mode tss rainbow-mode json-mode ag dumb-jump irony-eldoc typescript-mode company-irony restclient flycheck-clang-analyzer flycheck-yamllint company-auctex company-go paredit ac-php ac-php-core php+-mode auctex projectile projectile-variable material-theme ac-js2 js2-refactor js2-mode ac-cider expand-region multiple-cursors telephone-line yaml-mode sublime-themes cmake-mode company-racer go-mode flycheck-rust rust-mode idomenu imenu-list latex-preview-pane 2048-game virtualenv neotree move-text molokai-theme markdown-mode magit glsl-mode gitlab evil emmet-mode dracula-theme diredful d-mode company-irony-c-headers))
+   '(geiser geiser-guile which-key ido-grid-mode ido-completing-read+ csharp-mode hl-todo eldoc eldoc-cmake yasnippet web-mode use-package lsp-mode flatbuffers-mode lsp-ui alect-themes rainbow-delimiters forge magit-lfs xah-lookup cider clojure-mode rjsx-mode smart-mode-line lsp-clangd company-lsp smart-tabs-mode gruvbox-theme spacemacs-theme smartparens sr-speedbar undo-tree solarized-theme tide jsx-mode tss rainbow-mode json-mode ag dumb-jump irony-eldoc typescript-mode company-irony restclient flycheck-clang-analyzer flycheck-yamllint company-auctex company-go paredit ac-php ac-php-core php+-mode auctex projectile projectile-variable material-theme ac-js2 js2-refactor js2-mode ac-cider expand-region multiple-cursors telephone-line yaml-mode sublime-themes cmake-mode company-racer go-mode flycheck-rust rust-mode idomenu imenu-list latex-preview-pane 2048-game virtualenv neotree move-text molokai-theme markdown-mode magit glsl-mode gitlab evil emmet-mode dracula-theme diredful d-mode company-irony-c-headers))
  '(pdf-latex-command "xelatex")
  '(pdf-view-midnight-colors '("#fdf4c1" . "#32302f"))
  '(pos-tip-background-color "#32302f")
@@ -306,6 +306,13 @@ static char *gnus-pointer[] = {
 
 (use-package forge
   :after magit)
+
+(use-package geiser
+  :ensure t)
+
+(use-package geiser-guile
+  :ensure t
+  :after geiser)
 
 (use-package yasnippet                  ; Snippets
   :ensure t
