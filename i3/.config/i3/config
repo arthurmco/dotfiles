@@ -204,12 +204,5 @@ smart_gaps on
 exec_always nitrogen --restore
 exec picom
 
-# Autostart
-assign [class="xterm"] $ws1
-assign [class="Alacritty"] $ws1
-assign [class="Emacs"] $ws2
-assign [class="Firefox"] $ws3
-
-exec alacritty
-exec emacs
-
+bindsym $mod+F1 exec emacs
+bindsym $mod+F2 exec firefox
