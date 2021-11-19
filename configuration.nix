@@ -97,6 +97,7 @@
      emacs
      gcc11
      clang
+     clang-tools
      cmake
      curl
      git
@@ -120,6 +121,8 @@
      
      rustup
      sqlite
+
+     vlc
 
      python38Packages.pip
   ];
