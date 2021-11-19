@@ -55,13 +55,6 @@ There are two things you can do about this warning:
 		        indent-tabs-mode nil)
   (c-set-offset 'arglist-intro '+))
 
-(defun setup-windmove ()
-  (global-set-key [M-left] 'windmove-left)          ; move to left window
-  (global-set-key [M-right] 'windmove-right)        ; move to right window
-  (global-set-key [M-up] 'windmove-up)              ; move to upper window
-  (global-set-key [M-down] 'windmove-down) ; move to lower window
-  )
-
 (defun setup-custom-keys ()
   (global-set-key (kbd "M-s") 'replace-string)
   (global-set-key (kbd "C-c r") 'revert-buffer)
@@ -81,9 +74,7 @@ There are two things you can do about this warning:
 ;;  (add-hook 'php-mode-hook #'lsp)
   (add-hook 'markdown-mode-hook 'auto-fill-mode)
   (add-hook 'latex-mode-hook 'auto-fill-mode)
-  (add-hook 'css-mode-hook 'rainbow-mode)
-  (add-hook 'html-mode-hook 'emmet-mode)
-  (setq lsp-clients-clangd-executable "/usr/lib/llvm-10/bin/clangd")) ; 100mb
+  (add-hook 'css-mode-hook 'rainbow-mode)) ; 100mb
 
 (setup-c-indentation)
 (setup-highlight)
@@ -91,9 +82,17 @@ There are two things you can do about this warning:
 
 (require 'use-package)
 
+(use-package emmet-mode
+  :ensure t
+  :hook ((html-mode . emmet-mode)))
+
 (use-package windmove
   :ensure t
-  :config (setup-windmove))
+  :bind (("M-<left>" . windmove-left)          ; move to left window
+         ("M-<right>" . windmove-right)        ; move to right window
+         ("M-<up>" . windmove-up)              ; move to upper window
+         ("M-<down>" . windmove-down) ; move to lower window
+))
 
 (use-package move-text
   :ensure t
@@ -130,6 +129,7 @@ There are two things you can do about this warning:
   :mode ("\\.jsx\\'"))
 
 (use-package js2-mode
+  :ensure t
   :mode ("\\.js\\'"))
 
 (use-package magit
@@ -170,12 +170,12 @@ There are two things you can do about this warning:
   (setq recentf-max-saved-items 25)
   :bind (("\C-c C-r" . recentf-open-files)))
 
-(use-package org
-  :ensure t
-  :bind (("\C-c l" . org-store-link)
-         ("\C-c a" . org-agenda))
-  :config
-  (setq org-log-done t))
+;(use-package org
+;  :ensure t
+;  :bind (("\C-c l" . org-store-link)
+;         ("\C-c a" . org-agenda))
+;  :config
+;  (setq org-log-done t))
 
 (use-package hl-todo
   :ensure t
@@ -186,15 +186,19 @@ There are two things you can do about this warning:
 
 
 (use-package smart-mode-line
+  :ensure t
   :config (sml/setup))
 
 (use-package rainbow-delimiters
+  :ensure t
   :hook ((c++-mode . rainbow-delimiters-mode)
+         (scheme-mode . rainbow-delimiters-mode)
          (js2-mode . rainbow-delimiters-mode)))
 
 (setq lsp-keymap-prefix "C-c s")
 
-(use-package which-key)
+(use-package which-key
+  :ensure t)
 
 (use-package lsp-mode
   :ensure t
@@ -205,6 +209,8 @@ There are two things you can do about this warning:
   (setq read-process-output-max (* 1024 1024)) ;; 1mb
   (setq gc-cons-threshold 100000000) ; 100mb
   (which-key-mode)
+
+  (setq lsp-clients-clangd-executable "/usr/lib/llvm-10/bin/clangd")
   
   :hook ((c++-mode . lsp)
          (js2-mode . lsp)
@@ -217,6 +223,6 @@ There are two things you can do about this warning:
   :bind (("\C-c s" . lsp-command-map)
          ("\C-c f" . lsp-format-buffer))
   :commands lsp)
-  
+
 (setup-mode-hooks)
 (setup-custom-keys)
