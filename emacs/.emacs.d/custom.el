@@ -45,7 +45,7 @@ static char *note[] = {
 \"######....\",
 \"#######..#\" };"))
  '(fci-rule-color "#32302f")
- '(gnus-logo-colors '("#528d8d" "#c0c0c0"))
+ '(gnus-logo-colors '("#528d8d" "#c0c0c0") t)
  '(gnus-mode-line-image-cache
    '(image :type xpm :ascent center :data "/* XPM */
 static char *gnus-pointer[] = {
@@ -67,7 +67,7 @@ static char *gnus-pointer[] = {
 \"######..###.######\",
 \"###....####.######\",
 \"###..######.######\",
-\"###########.######\" };"))
+\"###########.######\" };") t)
  '(go-command "go")
  '(highlight-changes-colors '("#d3869b" "#b16286"))
  '(highlight-symbol-colors
@@ -114,7 +114,7 @@ static char *gnus-pointer[] = {
  '(nrepl-message-colors
    '("#fb4933" "#d65d0e" "#d79921" "#747400" "#b9b340" "#14676b" "#689d6a" "#d3869b" "#b16286"))
  '(package-selected-packages
-   '(geiser geiser-guile which-key ido-grid-mode ido-completing-read+ csharp-mode hl-todo eldoc eldoc-cmake yasnippet web-mode use-package lsp-mode flatbuffers-mode lsp-ui alect-themes rainbow-delimiters forge magit-lfs xah-lookup cider clojure-mode rjsx-mode smart-mode-line lsp-clangd company-lsp smart-tabs-mode gruvbox-theme spacemacs-theme smartparens sr-speedbar undo-tree solarized-theme tide jsx-mode tss rainbow-mode json-mode ag dumb-jump irony-eldoc typescript-mode company-irony restclient flycheck-clang-analyzer flycheck-yamllint company-auctex company-go paredit ac-php ac-php-core php+-mode auctex projectile projectile-variable material-theme ac-js2 js2-refactor js2-mode ac-cider expand-region multiple-cursors telephone-line yaml-mode sublime-themes cmake-mode company-racer go-mode flycheck-rust rust-mode idomenu imenu-list latex-preview-pane 2048-game virtualenv neotree move-text molokai-theme markdown-mode magit glsl-mode gitlab evil emmet-mode dracula-theme diredful d-mode company-irony-c-headers))
+   '(ox-epub direnv nix-sandbox yasnippet-snippets geiser geiser-guile which-key ido-grid-mode ido-completing-read+ csharp-mode hl-todo eldoc eldoc-cmake yasnippet web-mode use-package lsp-mode flatbuffers-mode lsp-ui alect-themes rainbow-delimiters forge magit-lfs xah-lookup cider clojure-mode rjsx-mode smart-mode-line lsp-clangd company-lsp smart-tabs-mode gruvbox-theme spacemacs-theme smartparens sr-speedbar undo-tree solarized-theme tide jsx-mode tss rainbow-mode json-mode ag dumb-jump irony-eldoc typescript-mode company-irony restclient flycheck-clang-analyzer flycheck-yamllint company-auctex company-go paredit ac-php ac-php-core php+-mode auctex projectile projectile-variable material-theme ac-js2 js2-refactor js2-mode ac-cider expand-region multiple-cursors telephone-line yaml-mode sublime-themes cmake-mode company-racer go-mode flycheck-rust rust-mode idomenu imenu-list latex-preview-pane 2048-game virtualenv neotree move-text molokai-theme markdown-mode magit glsl-mode gitlab evil emmet-mode dracula-theme diredful d-mode company-irony-c-headers))
  '(pdf-latex-command "xelatex")
  '(pdf-view-midnight-colors '("#fdf4c1" . "#32302f"))
  '(pos-tip-background-color "#32302f")
@@ -163,6 +163,6 @@ static char *gnus-pointer[] = {
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:family "Iosevka" :foundry "CYEL" :slant normal :weight normal :height 120 :width normal))))
+ '(default ((t (:family "Iosevka" :foundry "CYEL" :slant normal :weight normal :height 115 :width normal))))
  '(bold ((t (:weight semi-bold))))
  '(bold-italic ((t (:slant italic :weight semi-bold)))))

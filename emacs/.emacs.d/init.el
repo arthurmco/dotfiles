@@ -210,12 +210,12 @@ There are two things you can do about this warning:
   (setq gc-cons-threshold 100000000) ; 100mb
   (which-key-mode)
 
-  (setq lsp-clients-clangd-executable "/usr/lib/llvm-10/bin/clangd")
+  (setq lsp-clients-clangd-executable "/run/current-system/sw/bin/clangd")
   
   :hook ((c++-mode . lsp)
          (js2-mode . lsp)
          (lsp . #'lsp-enable-which-key-integration)
-;         (rust-mode . lsp)
+         (rust-mode . lsp)
          (typescript-mode . lsp))
   
   :config 
@@ -224,5 +224,19 @@ There are two things you can do about this warning:
          ("\C-c f" . lsp-format-buffer))
   :commands lsp)
 
+;; Colors emacs compilation buffer, so I do not see those bunch of ^[[32m's when using cmake
+(use-package ansi-color
+  :config
+  (defun my-colorize-compilation-buffer ()
+    (when (eq major-mode 'compilation-mode)
+      (ansi-color-apply-on-region compilation-filter-start (point-max))))
+  :hook (compilation-filter . my-colorize-compilation-buffer))
+
+
+(use-package direnv
+ :config
+ (direnv-mode))
+
 (setup-mode-hooks)
 (setup-custom-keys)
+
