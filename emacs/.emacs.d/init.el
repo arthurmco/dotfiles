@@ -146,6 +146,15 @@ There are two things you can do about this warning:
   :ensure t
   :after geiser)
 
+
+(use-package python-mode
+  :ensure t)
+
+(use-package indent-guide
+  :ensure t
+  :after python-mode
+  :hook ((python-mode . indent-guide-mode)))
+
 (use-package yasnippet                  ; Snippets
   :ensure t
   :config
