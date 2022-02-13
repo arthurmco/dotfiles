@@ -62,6 +62,7 @@
   services.xserver.desktopManager.gnome.enable = true;
   services.xserver.displayManager.gdm.enable = true;
   services.xserver.videoDrivers = ["nvidia"];
+  services.fstrim.enable = true;
 
   fonts.fonts = with pkgs; [
     iosevka
@@ -87,6 +88,8 @@
   # Enable sound.
   sound.enable = true;
   hardware.pulseaudio.enable = true;
+  hardware.opengl.enable = true;
+  hardware.opengl.driSupport32Bit = true;
 
   # Enable touchpad support (enabled default in most desktopManager).
   services.xserver.libinput.enable = true;
@@ -95,7 +98,7 @@
   users.users.arthurmco = {
      shell = pkgs.fish;
      isNormalUser = true;
-     extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
+     extraGroups = [ "wheel" "docker" "wireshark" ]; # Enable ‘sudo’ for the user.
   };
 
   # List packages installed in system profile. To search, run:
@@ -106,6 +109,7 @@
      firefox
      emacs
      gcc11
+     gdb
      clang
      clang-tools
      cmake
@@ -128,16 +132,23 @@
      powerline
      python3
      guile_2_2
-     
+     audacity
+     blender    
+ 
      rustup
      sqlite
 
      vlc
      silver-searcher
+     wireshark-qt
 
      direnv
 
      python38Packages.pip
+
+     xorg.libxcb
+
+     ntfs3g
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -155,11 +166,18 @@
 
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
+  services.openssh.forwardX11 = true;
+  services.udisks2.enable = true;
+  services.flatpak.enable = true;
 
   nixpkgs.config.allowUnfree = true;
   
   # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
+
+  # open the VNC port because I want to open my game and view it remotely
+  # also allow 8000 because of the miniserver
+  networking.firewall.allowedTCPPorts = [ 5900 8000 ];
+
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
