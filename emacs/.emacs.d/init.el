@@ -82,6 +82,13 @@ There are two things you can do about this warning:
 
 (require 'use-package)
 
+(use-package exec-path-from-shell
+  :ensure t
+  :init
+  (when (memq window-system '(mac ns x))
+    (exec-path-from-shell-initialize)))
+
+
 (use-package emmet-mode
   :ensure t
   :hook ((html-mode . emmet-mode)))
@@ -98,6 +105,9 @@ There are two things you can do about this warning:
   :ensure t
   :bind (("M-S-<up>" . move-text-up)
          ("M-S-<down>" . move-text-down)))
+
+(use-package rainbow-delimiters
+  :ensure t)
 
 (use-package idomenu
   :ensure t
@@ -209,6 +219,12 @@ There are two things you can do about this warning:
 (use-package which-key
   :ensure t)
 
+(use-package company
+  :ensure t
+  :init
+  (setq company-tooltip-align-annotations t))
+
+
 (use-package lsp-mode
   :ensure t
   :init
@@ -240,6 +256,11 @@ There are two things you can do about this warning:
     (when (eq major-mode 'compilation-mode)
       (ansi-color-apply-on-region compilation-filter-start (point-max))))
   :hook (compilation-filter . my-colorize-compilation-buffer))
+
+
+(use-package nim-mode
+  :ensure t
+  :hook ((nim-mode . lsp)))
 
 
 (use-package direnv
