@@ -74,6 +74,8 @@ There are two things you can do about this warning:
 ;;  (add-hook 'php-mode-hook #'lsp)
   (add-hook 'markdown-mode-hook 'auto-fill-mode)
   (add-hook 'latex-mode-hook 'auto-fill-mode)
+  (add-hook 'LaTeX-mode-hook 'auto-fill-mode)
+  (add-hook 'TeX-mode-hook 'auto-fill-mode)
   (add-hook 'css-mode-hook 'rainbow-mode)) ; 100mb
 
 (setup-c-indentation)
@@ -120,8 +122,8 @@ There are two things you can do about this warning:
 
 (use-package multiple-cursors
   :ensure t
-  :bind (("M-s-<down>" . mc/mark-next-like-this)
-         ("M-s-<up>" . mc/mark-previous-like-this)
+  :bind (("C-x M-<down>" . mc/mark-next-like-this)
+         ("C-x M-<up>" . mc/mark-previous-like-this)
          ("C-c C-<" . mc/mark-all-like-this)
          ("M-s-c M-s-c" . mc/edit-lines)))
 
@@ -266,6 +268,42 @@ There are two things you can do about this warning:
 (use-package direnv
  :config
  (direnv-mode))
+
+(use-package elfeed
+  :ensure t
+  :init
+  (setq elfeed-feeds
+        '(("https://devblogs.microsoft.com/oldnewthing/feed/" blog)
+          ("https://arthurmco.github.io/blog/index.xml" blog mine)
+          ("https://www.reddit.com/r/emacs/.rss" reddit)
+          ("https://www.reddit.com/r/programmingcirclejerk/.rss" reddit)
+          ("https://www.reddit.com/r/rust/.rss" reddit)
+          ("https://www.reddit.com/r/cpp/.rss" reddit)
+          ("https://www.reddit.com/r/SerenityOS/.rss" reddit)))
+
+  :config
+  (defface blog-elfeed-entry
+    '((t :foreground "#77a"))
+    "Marks a blog entry.")
+
+  (push '(blog blog-elfeed-entry)
+        elfeed-search-face-alist))
+
+(use-package ispell
+  :init
+  (setq ispell-dictionary "brasileiro.multi"))
+
+
+(use-package emms
+  :init
+  (require 'emms-setup)
+  (emms-all)
+  (emms-default-players)
+  (setq emms-source-file-default-directory "~/Music/mp3")
+  (require 'emms-player-simple)
+  (require 'emms-source-file)
+  (require 'emms-source-playlist)
+  (setq emms-player-list '(emms-player-vlc)))
 
 (setup-mode-hooks)
 (setup-custom-keys)
