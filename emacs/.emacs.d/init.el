@@ -1,23 +1,12 @@
 ;; Config file
 
+;;;
+;;; TODO: use tree-sitter when emacs 29+ start being available on macOS
+
 ;; Setup MELPA
 (require 'package)
-(let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
-                    (not (gnutls-available-p))))
-       (proto (if no-ssl "http" "https")))
-  (when no-ssl
-    (warn "\
-Your version of Emacs does not support SSL connections,
-which is unsafe because it allows man-in-the-middle attacks.
-There are two things you can do about this warning:
-1. Install an Emacs version that does support SSL and be safe.
-2. Remove this warning from your init file so you won't see it again."))
-  ;; Comment/uncomment these two lines to enable/disable MELPA and MELPA Stable as desired
-  (add-to-list 'package-archives (cons "melpa" (concat proto "://melpa.org/packages/")) t)
-  ;;(add-to-list 'package-archives (cons "melpa-stable" (concat proto "://stable.melpa.org/packages/")) t)
-  (when (< emacs-major-version 24)
-    ;; For important compatibility libraries like cl-lib
-    (add-to-list 'package-archives (cons "gnu" (concat proto "://elpa.gnu.org/packages/")))))
+
+(add-to-list 'package-archives (cons "melpa" "https://melpa.org/packages/") t)
 
 ;; Added by Package.el.  This must come before configurations of
 ;; installed packages.  Don't delete this line.  If you don't want it,
@@ -25,8 +14,19 @@ There are two things you can do about this warning:
 ;; You may delete these explanatory comments.
 (package-initialize)
 
+
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
+
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+
+(add-to-list 'load-path (expand-file-name "settings" (file-name-directory load-file-name)))
+
+;;;
+;;; Custom options
+;;;
 
 (toggle-frame-maximized)
 
@@ -37,84 +37,65 @@ There are two things you can do about this warning:
       kept-new-versions 20   ; how many of the newest versions to keep
       kept-old-versions 5    ; and how many of the old
       )
+
+(show-paren-mode 1)
 (electric-pair-mode t)
 
-(use-package projectile
-  :ensure t
-  :init
-  (require 'projectile)
-  (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
-  (projectile-global-mode)
-  (setq projectile-enable-caching t))
+(global-hl-line-mode)
+(set-face-attribute hl-line-face nil :underline nil)
+
+(setq-default c-basic-offset 4
+	          tab-width 4
+	          indent-tabs-mode nil)
+
+;;;
+;;; Custom keybindings
+;;;
+
+(global-set-key (kbd "M-s") 'replace-string)
+(global-set-key (kbd "C-c r") 'revert-buffer)
 
 
-(defun setup-c-indentation ()
-  "Configure indentation right on C modes"
-  (setq-default c-basic-offset 4
-		        tab-width 4
-		        indent-tabs-mode nil)
-  (c-set-offset 'arglist-intro '+))
+;;;
+;;; Custom themes
+;;;
 
-(defun setup-custom-keys ()
-  (global-set-key (kbd "M-s") 'replace-string)
-  (global-set-key (kbd "C-c r") 'revert-buffer)
+(defmacro download-theme (name)
+  `(use-package ,name
+     :if window-system
+     :ensure t))
 
-  ;; delete non needed whitespace
-  ;; this might be in a before-save-hook, but I want to do only when I want
-  ;; and markdown uses trailing whitespaces for non-new-paragraph-newline
-  (global-set-key (kbd "C-c w") 'delete-trailing-whitespace)
-  (global-set-key (kbd "C-c ! l") 'flymake-show-diagnostics-buffer))
+(download-theme solarized-theme)
 
-(defun setup-highlight ()
-  (global-hl-line-mode)
-  (set-face-attribute hl-line-face nil :underline nil))
-
-(defun setup-mode-hooks ()
-;;  (add-hook 'c-mode-hook #'lsp)
-;;  (add-hook 'php-mode-hook #'lsp)
-  (add-hook 'markdown-mode-hook 'auto-fill-mode)
-  (add-hook 'latex-mode-hook 'auto-fill-mode)
-  (add-hook 'LaTeX-mode-hook 'auto-fill-mode)
-  (add-hook 'TeX-mode-hook 'auto-fill-mode)
-  (add-hook 'css-mode-hook 'rainbow-mode)) ; 100mb
-
-(setup-c-indentation)
-(setup-highlight)
-(show-paren-mode 1)
-
-(require 'use-package)
-
+;;;
+;;; Platform-specific
+;;;
 (use-package exec-path-from-shell
+  :if (memq window-system '(mac ns))
   :ensure t
-  :init
-  (when (memq window-system '(mac ns x))
-    (exec-path-from-shell-initialize)))
+  :config
+  (exec-path-from-shell-initialize))
 
 
-(use-package emmet-mode
-  :ensure t
-  :hook ((html-mode . emmet-mode)))
+;;;
+;;; Basic package options ----------------------
+;;;
+
+(use-package delight
+  :ensure t)
 
 (use-package windmove
   :ensure t
-  :bind (("M-<left>" . windmove-left)          ; move to left window
-         ("M-<right>" . windmove-right)        ; move to right window
-         ("M-<up>" . windmove-up)              ; move to upper window
-         ("M-<down>" . windmove-down) ; move to lower window
-))
-
+  :bind (("M-<left>" . windmove-left)
+	 ("M-<right>" . windmove-right)
+	 ("M-<up>" . windmove-up)
+	 ("M-<down>" . windmove-down)))
+	  
 (use-package move-text
   :ensure t
   :bind (("M-S-<up>" . move-text-up)
          ("M-S-<down>" . move-text-down)))
 
-(use-package rainbow-delimiters
-  :ensure t)
-
-(use-package idomenu
-  :ensure t
-  :init (ido-grid-mode 1)
-  :config (ido-mode t))
 
 (use-package expand-region
   :ensure t
@@ -127,28 +108,13 @@ There are two things you can do about this warning:
          ("C-c C-<" . mc/mark-all-like-this)
          ("M-s-c M-s-c" . mc/edit-lines)))
 
-(use-package web-mode
-  :mode ("\\.html\\'"
-         "\\.phtml\\'"
-         "\\.tpl\\'"
-         "\\.[agj]sp\\'"
-         "\\.as[cp]x\\'"
-         "\\.erb\\'"
-         "\\.mustache\\'"
-         "\\.djhtml\\'"))
-
-(use-package rjsx-mode
-  :mode ("\\.jsx\\'"))
-
-(use-package js2-mode
-  :ensure t
-  :mode ("\\.js\\'"))
-
 (use-package magit
   :ensure t
   :bind (("C-c g" . magit-status)))
 
 (use-package forge
+  :ensure t
+  :requires magit
   :after magit)
 
 (use-package geiser
@@ -158,153 +124,217 @@ There are two things you can do about this warning:
   :ensure t
   :after geiser)
 
-
-(use-package python-mode
-  :ensure t)
-
-(use-package indent-guide
-  :ensure t
-  :after python-mode
-  :hook ((python-mode . indent-guide-mode)))
-
-(use-package yasnippet                  ; Snippets
-  :ensure t
-  :config
-  (setq
-   yas-verbosity 1                      ; No need to be so verbose
-   yas-wrap-around-region t)
-
-  (with-eval-after-load 'yasnippet
-    (setq yas-snippet-dirs '(yasnippet-snippets-dir)))
-
-  (yas-reload-all)
-  (yas-global-mode))
-
-(use-package yasnippet-snippets         ; Collection of snippets
-  :ensure t)
-
 (use-package recentf
   :ensure t
   :init
   (recentf-mode 1)
   (setq recentf-max-menu-items 25)
   (setq recentf-max-saved-items 25)
-  :bind (("\C-c C-r" . recentf-open-files)))
+  :bind (("C-c C-r" . recentf-open-files)))
 
-;(use-package org
-;  :ensure t
-;  :bind (("\C-c l" . org-store-link)
-;         ("\C-c a" . org-agenda))
-;  :config
-;  (setq org-log-done t))
-
-(use-package hl-todo
+(use-package rainbow-mode
   :ensure t
-  :bind (("\C-c h p" . hl-todo-previous)
-         ("\C-c h n" . hl-todo-next)
-         ("\C-c h o" . hl-todo-occur)
-         ("\C-c h i" . hl-todo-insert)))
+  :hook (css-mode scss-mode))
 
-
-(use-package smart-mode-line
+(use-package emmet-mode
   :ensure t
-  :config (sml/setup))
+  :hook (html-mode web-mode))
+
+(use-package web-mode
+  :ensure t
+  :mode ("\\.html\\'"
+         "\\.phtml\\'"
+         "\\.tpl\\'"
+         "\\.tsx\\'"
+         "\\.[agj]sp\\'"
+         "\\.as[cp]x\\'"
+         "\\.erb\\'"
+         "\\.mustache\\'"
+         "\\.djhtml\\'"))
 
 (use-package rainbow-delimiters
   :ensure t
-  :hook ((c++-mode . rainbow-delimiters-mode)
-         (scheme-mode . rainbow-delimiters-mode)
-         (js2-mode . rainbow-delimiters-mode)))
-
-(setq lsp-keymap-prefix "C-c s")
+  :hook (c++-mode scheme-mode rust-mode js2-mode racket-mode typescript-mode))
 
 (use-package which-key
   :ensure t)
 
-(use-package company
-  :ensure t
-  :init
-  (setq company-tooltip-align-annotations t))
-
-
-(use-package lsp-mode
-  :ensure t
-  :init
-  (require 'lsp-ido)
-  
-  ;; required by lsp-mode to work nicely
-  (setq read-process-output-max (* 1024 1024)) ;; 1mb
-  (setq gc-cons-threshold 100000000) ; 100mb
-  (which-key-mode)
-
-  (setq lsp-clients-clangd-executable "/run/current-system/sw/bin/clangd")
-  
-  :hook ((c++-mode . lsp)
-         (js2-mode . lsp)
-         (lsp . #'lsp-enable-which-key-integration)
-         (rust-mode . lsp)
-         (typescript-mode . lsp))
-  
-  :config 
-  (setq lsp-clients-clangd-args '("-j=8" "-background-index" "-log=error"))
-  :bind (("\C-c s" . lsp-command-map)
-         ("\C-c f" . lsp-format-buffer))
-  :commands lsp)
 
 ;; Colors emacs compilation buffer, so I do not see those bunch of ^[[32m's when using cmake
 (use-package ansi-color
+  :ensure t
   :config
   (defun my-colorize-compilation-buffer ()
     (when (eq major-mode 'compilation-mode)
       (ansi-color-apply-on-region compilation-filter-start (point-max))))
   :hook (compilation-filter . my-colorize-compilation-buffer))
 
-
 (use-package nim-mode
   :ensure t
   :hook ((nim-mode . lsp)))
 
-
 (use-package direnv
- :config
- (direnv-mode))
-
-(use-package elfeed
   :ensure t
-  :init
-  (setq elfeed-feeds
-        '(("https://devblogs.microsoft.com/oldnewthing/feed/" blog)
-          ("https://arthurmco.github.io/blog/index.xml" blog mine)
-          ("https://www.reddit.com/r/emacs/.rss" reddit)
-          ("https://www.reddit.com/r/programmingcirclejerk/.rss" reddit)
-          ("https://www.reddit.com/r/rust/.rss" reddit)
-          ("https://www.reddit.com/r/cpp/.rss" reddit)
-          ("https://www.reddit.com/r/SerenityOS/.rss" reddit)))
-
   :config
-  (defface blog-elfeed-entry
-    '((t :foreground "#77a"))
-    "Marks a blog entry.")
+  (direnv-mode))
 
-  (push '(blog blog-elfeed-entry)
-        elfeed-search-face-alist))
 
-(use-package ispell
+(use-package idomenu
+  :ensure t
+  :config
+  (ido-mode t))
+
+(use-package ido-grid-mode
+  :after idomenu
+  :ensure t
+  :config
+  (ido-grid-mode 1))
+
+(use-package auto-fill-mode
+  :hook ((markdown-mode LaTeX-mode) . auto-fill-mode))
+
+(use-package rust-mode
+  :ensure t)
+
+(use-package typescript-mode
+  :ensure t)
+
+(use-package projectile
+  :ensure t
+  :delight '(:eval (concat " proj[" (projectile-project-name) "]"))
+  :bind-keymap
+  ("C-c p" . projectile-command-map)
   :init
-  (setq ispell-dictionary "brasileiro.multi"))
+  (setq projectile-enable-caching t)
+  (projectile-global-mode))
 
+(use-package yasnippet
+  :defer t
+  :ensure t
+  :config
+  (yas-reload-all))
 
-(use-package emms
+(use-package yasnippet-snippets
+  :ensure t
+  :after yasnippet)
+
+(use-package yas-minor-mode
+  :after yasnippet
+  :hook (rust-mode c++-mode python-mode typescript-mode nim-mode))
+
+(use-package eldoc
+  :ensure t
+  :delight " doc")
+
+(use-package editorconfig
+  :ensure t
+  :delight " EC"
+  :config
+  (editorconfig-mode 1))
+
+;;; TODO: keybinding for ag-kill-buffers
+(use-package ag
+  :ensure t)
+
+(use-package restclient
+  :ensure t)
+
+;;;
+;;; Completions, language servers, et al --------------
+;;;
+
+(defun setup-tide-mode ()
+  (interactive)
+  (tide-setup)
+  (setq flycheck-check-syntax-automatically '(save mode-enabled))
+  ;(eldoc-mode +1)
+  (tide-hl-identifier-mode +1))
+
+(use-package flycheck
+  ; only for tide
+  :ensure t
+  :hook (typescript-mode))
+
+(use-package tide
+  ;; use tide because eglot does not work well with typescript-language-server
+  ;; TODO: this does not seem to work?
+  :ensure t
+  :after (typescript-mode company flycheck)
+  :hook ((typescript-mode . setup-tide-mode)
+	 (web-mode . (lambda ()
+		       (when (string-equal "tsx" (file-name-extension buffer-file-name))
+			 (setup-tide-mode))))
+	 (before-save . tide-format-before-save)))
+
+(use-package company
+  :ensure t
+  :delight
+  :hook (c++-mode rust-mode python-mode typescript-mode js2-mode))
+
+(use-package flymake
+  :ensure t
+  :hook (c++-mode rust-mode python-mode)
+  :bind (("C-c ! l" . flymake-show-buffer-diagnostics)))
+
+(use-package eglot
+  :ensure t
+  :hook (((rust-mode python-mode) . eglot-ensure)))
+
+;;;
+;;; writing (org and LaTeX) --------------
+;;;
+
+(use-package tex
+  :ensure auctex
   :init
-  (require 'emms-setup)
-  (emms-all)
-  (emms-default-players)
-  (setq emms-source-file-default-directory "~/Music/mp3")
-  (require 'emms-player-simple)
-  (require 'emms-source-file)
-  (require 'emms-source-playlist)
-  (setq emms-player-list '(emms-player-vlc)))
+  (setq-default TeX-master nil)
+  (setq TeX-parse-self t)
+  (setq TeX-auto-save t))
 
-(setup-mode-hooks)
-(setup-custom-keys)
+(require 'arthurmco-org)
 
+
+(defconst default-org-roam-template
+  '("d" "default" plain
+    "%?"
+    :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+    :unnarrowed t))
+
+(defconst arthurverse-org-roam-template
+  '("a" "arthurverse" plain
+    "%?"
+    :if-new (file+head "book/%<%Y%m%d>-${slug}.org"
+                       "#+title: ${title}\n#+filetags: :arthurverse:\n")
+    :unnarrowed t))
+
+(use-package org-roam
+  :after org
+  :ensure
+  :custom
+  (org-roam-directory (file-truename "~/roam"))
+  :init
+  (setq org-roam-v2-ack t)
+  (org-roam-db-autosync-mode)
+  (setq org-roam-capture-templates
+        (list default-org-roam-template
+              arthurverse-org-roam-template))
+  :bind (("C-c n f" . org-roam-node-find)
+         ("C-c n r" . org-roam-node-random)		    
+         (:map org-mode-map
+               (("C-c n i" . org-roam-node-insert)
+                ("C-c n o" . org-id-get-create)
+                ("C-c n t" . org-roam-tag-add)
+                ("C-c n a" . org-roam-alias-add)
+                ("C-c n l" . org-roam-buffer-toggle)))))
+
+(use-package websocket
+  :after org-roam)
+
+(use-package org-roam-ui
+  :after org-roam
+  :ensure t
+  :config
+    (setq org-roam-ui-sync-theme t
+          org-roam-ui-follow t
+          org-roam-ui-update-on-save t
+          org-roam-ui-open-on-start t))
