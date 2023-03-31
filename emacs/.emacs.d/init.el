@@ -103,8 +103,8 @@
 
 (use-package multiple-cursors
   :ensure t
-  :bind (("C-x M-<down>" . mc/mark-next-like-this)
-         ("C-x M-<up>" . mc/mark-previous-like-this)
+  :bind (("M-s-<down>" . mc/mark-next-like-this)
+         ("M-s-<up>" . mc/mark-previous-like-this)
          ("C-c C-<" . mc/mark-all-like-this)
          ("M-s-c M-s-c" . mc/edit-lines)))
 
@@ -116,13 +116,6 @@
   :ensure t
   :requires magit
   :after magit)
-
-(use-package geiser
-  :ensure t)
-
-(use-package geiser-guile
-  :ensure t
-  :after geiser)
 
 (use-package recentf
   :ensure t
@@ -159,36 +152,21 @@
 (use-package which-key
   :ensure t)
 
-
-;; Colors emacs compilation buffer, so I do not see those bunch of ^[[32m's when using cmake
-(use-package ansi-color
+(use-package counsel
   :ensure t
-  :config
-  (defun my-colorize-compilation-buffer ()
-    (when (eq major-mode 'compilation-mode)
-      (ansi-color-apply-on-region compilation-filter-start (point-max))))
-  :hook (compilation-filter . my-colorize-compilation-buffer))
+  :delight
+  :init
+  (setq ivy-use-virtual-buffers t)
+  (setq ivy-count-format "(%d/%d) ")
+  (ivy-mode 1)
+  :bind
+  (("M-x" . counsel-M-x)))
 
-(use-package nim-mode
+(use-package smex
   :ensure t
-  :hook ((nim-mode . lsp)))
-
-(use-package direnv
-  :ensure t
-  :config
-  (direnv-mode))
-
-
-(use-package idomenu
-  :ensure t
-  :config
-  (ido-mode t))
-
-(use-package ido-grid-mode
-  :after idomenu
-  :ensure t
-  :config
-  (ido-grid-mode 1))
+  :after counsel
+  :init
+  (smex-initialize))
 
 (use-package auto-fill-mode
   :hook ((markdown-mode LaTeX-mode) . auto-fill-mode))
@@ -220,7 +198,7 @@
 
 (use-package yas-minor-mode
   :after yasnippet
-  :hook (rust-mode c++-mode python-mode typescript-mode nim-mode))
+  :hook (rust-mode c++-mode python-mode typescript-mode org-mode))
 
 (use-package eldoc
   :ensure t
@@ -237,6 +215,16 @@
   :ensure t)
 
 (use-package restclient
+  :ensure t)
+
+(use-package geiser
+  :ensure t)
+
+(use-package geiser-guile
+  :after geiser
+  :ensure t)
+
+(use-package nim-mode
   :ensure t)
 
 ;;;
@@ -300,15 +288,7 @@
     :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
     :unnarrowed t))
 
-(defconst arthurverse-org-roam-template
-  '("a" "arthurverse" plain
-    "%?"
-    :if-new (file+head "book/%<%Y%m%d>-${slug}.org"
-                       "#+title: ${title}\n#+filetags: :arthurverse:\n")
-    :unnarrowed t))
-
 (use-package org-roam
-  :after org
   :ensure
   :custom
   (org-roam-directory (file-truename "~/roam"))
@@ -317,7 +297,20 @@
   (org-roam-db-autosync-mode)
   (setq org-roam-capture-templates
         (list default-org-roam-template
-              arthurverse-org-roam-template))
+              '("a" "arthurverse things")
+              `("ad" "arthurverse default" plain
+                "%?"
+                :if-new (file+head "book/%<%Y%m%d>-${slug}.org"
+                                   ,(concat "#+title: ${title}\n"
+                                            "#+filetags: :arthurverse:\n"
+                                            "#+bibliography: book-research.bib\n"))
+                :unnarrowed t)
+              `("ac" "arthurverse character" plain
+                "%?"
+                :if-new (file+head "book/char/${slug}.org"
+                                   ,(concat "#+title: ${title}\n"
+                                            "#+filetags: :arthurverse: :character:\n"))
+                :unnarrowed t)))
   :bind (("C-c n f" . org-roam-node-find)
          ("C-c n r" . org-roam-node-random)		    
          (:map org-mode-map
@@ -334,7 +327,18 @@
   :after org-roam
   :ensure t
   :config
-    (setq org-roam-ui-sync-theme t
-          org-roam-ui-follow t
-          org-roam-ui-update-on-save t
-          org-roam-ui-open-on-start t))
+  (setq org-roam-ui-sync-theme t
+        org-roam-ui-follow t
+        org-roam-ui-update-on-save t
+        org-roam-ui-open-on-start t))
+
+
+;;; Custom functions
+
+(defun arthurmco/query-on-wiktionary (message)
+  "Query a certain term on wiktionary"
+  (interactive "sTerm: ")
+  (shell-command
+   (format "xdg-open https://en.wiktionary.org/w/index.php?search=%s"
+           (string-replace " " "+" message))))
+    

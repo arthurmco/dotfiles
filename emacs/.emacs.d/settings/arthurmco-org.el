@@ -30,9 +30,14 @@
   (setq org-startup-indented t
         org-pretty-entities t
         org-hide-emphasis-markers t
-        org-startup-with-inline-images t
+        org-startup-with-inline-images t        
         org-image-actual-width '(300))
-  (arthurmco/org-mode-font-fixes))
+  (arthurmco/org-mode-font-fixes)
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((latex . t)
+     (python . t)
+     (shell . t))))
 
 (use-package org-appear
   :after org
