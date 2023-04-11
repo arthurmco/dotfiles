@@ -206,6 +206,9 @@
   :if (display-graphic-p)
   :hook (dired-mode . all-the-icons-dired-mode))
 
+(use-package doom-modeline
+  :ensure t
+  :hook (after-init . doom-modeline-mode))
 
 ;;;
 ;;; Completions, language servers, et al --------------
