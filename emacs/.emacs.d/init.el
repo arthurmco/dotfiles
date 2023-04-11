@@ -84,6 +84,10 @@
 (use-package delight
   :ensure t)
 
+(use-package all-the-icons
+  :ensure t
+  :if (display-graphic-p))
+
 (use-package windmove
   :ensure t
   :bind (("M-<left>" . windmove-left)
@@ -133,18 +137,6 @@
   :ensure t
   :hook (html-mode web-mode))
 
-(use-package web-mode
-  :ensure t
-  :mode ("\\.html\\'"
-         "\\.phtml\\'"
-         "\\.tpl\\'"
-         "\\.tsx\\'"
-         "\\.[agj]sp\\'"
-         "\\.as[cp]x\\'"
-         "\\.erb\\'"
-         "\\.mustache\\'"
-         "\\.djhtml\\'"))
-
 (use-package rainbow-delimiters
   :ensure t
   :hook (c++-mode scheme-mode rust-mode js2-mode racket-mode typescript-mode))
@@ -171,11 +163,6 @@
 (use-package auto-fill-mode
   :hook ((markdown-mode LaTeX-mode) . auto-fill-mode))
 
-(use-package rust-mode
-  :ensure t)
-
-(use-package typescript-mode
-  :ensure t)
 
 (use-package projectile
   :ensure t
@@ -198,7 +185,7 @@
 
 (use-package yas-minor-mode
   :after yasnippet
-  :hook (rust-mode c++-mode python-mode typescript-mode org-mode))
+  :hook (rust-mode c++-mode python-mode typescript-mode org-mode org))
 
 (use-package eldoc
   :ensure t
@@ -214,18 +201,11 @@
 (use-package ag
   :ensure t)
 
-(use-package restclient
-  :ensure t)
+(use-package all-the-icons-dired
+  :ensure t
+  :if (display-graphic-p)
+  :hook (dired-mode . all-the-icons-dired-mode))
 
-(use-package geiser
-  :ensure t)
-
-(use-package geiser-guile
-  :after geiser
-  :ensure t)
-
-(use-package nim-mode
-  :ensure t)
 
 ;;;
 ;;; Completions, language servers, et al --------------
@@ -266,72 +246,22 @@
 
 (use-package eglot
   :ensure t
-  :hook (((rust-mode python-mode) . eglot-ensure)))
+  :hook (((rust-mode python-mode go-mode) . eglot-ensure)))
+
+(use-package direnv
+  :ensure t
+  :config
+  (direnv-mode))
 
 ;;;
 ;;; writing (org and LaTeX) --------------
 ;;;
 
-(use-package tex
-  :ensure auctex
-  :init
-  (setq-default TeX-master nil)
-  (setq TeX-parse-self t)
-  (setq TeX-auto-save t))
+(require 'arthurmco-languages)
 
 (require 'arthurmco-org)
-
-
-(defconst default-org-roam-template
-  '("d" "default" plain
-    "%?"
-    :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
-    :unnarrowed t))
-
-(use-package org-roam
-  :ensure
-  :custom
-  (org-roam-directory (file-truename "~/roam"))
-  :init
-  (setq org-roam-v2-ack t)
-  (org-roam-db-autosync-mode)
-  (setq org-roam-capture-templates
-        (list default-org-roam-template
-              '("a" "arthurverse things")
-              `("ad" "arthurverse default" plain
-                "%?"
-                :if-new (file+head "book/%<%Y%m%d>-${slug}.org"
-                                   ,(concat "#+title: ${title}\n"
-                                            "#+filetags: :arthurverse:\n"
-                                            "#+bibliography: book-research.bib\n"))
-                :unnarrowed t)
-              `("ac" "arthurverse character" plain
-                "%?"
-                :if-new (file+head "book/char/${slug}.org"
-                                   ,(concat "#+title: ${title}\n"
-                                            "#+filetags: :arthurverse: :character:\n"))
-                :unnarrowed t)))
-  :bind (("C-c n f" . org-roam-node-find)
-         ("C-c n r" . org-roam-node-random)		    
-         (:map org-mode-map
-               (("C-c n i" . org-roam-node-insert)
-                ("C-c n o" . org-id-get-create)
-                ("C-c n t" . org-roam-tag-add)
-                ("C-c n a" . org-roam-alias-add)
-                ("C-c n l" . org-roam-buffer-toggle)))))
-
-(use-package websocket
-  :after org-roam)
-
-(use-package org-roam-ui
-  :after org-roam
-  :ensure t
-  :config
-  (setq org-roam-ui-sync-theme t
-        org-roam-ui-follow t
-        org-roam-ui-update-on-save t
-        org-roam-ui-open-on-start t))
-
+(require 'arthurmco-roam)
+(require 'arthurmco-dash)
 
 ;;; Custom functions
 
@@ -339,6 +269,22 @@
   "Query a certain term on wiktionary"
   (interactive "sTerm: ")
   (shell-command
-   (format "xdg-open https://en.wiktionary.org/w/index.php?search=%s"
+   (format "xdg-open \"https://en.wiktionary.org/w/index.php?search=%s\""
            (string-replace " " "+" message))))
     
+
+(defun arthurmco/query-portuguese-lemma (word)
+  "Query a term on a portuguese dictionary"
+  (interactive "sPalavra: ")
+  (shell-command
+   (format "xdg-open \"https://michaelis.uol.com.br/busca?r=0&f=0&t=0&palavra=%s\""
+           (string-replace " " "+" word))))
+
+
+(defun arthurmco/query-synonym (word)
+  "Query a term on a portuguese dictionary"
+  (interactive "sPalavra: ")
+  (shell-command
+   (format "xdg-open \"https://www.sinonimos.com.br/busca.php?q=%s\""
+           (string-replace " " "+" word))))
+

@@ -18,6 +18,9 @@
     (set-face-attribute (car face) nil :weight 'regular :height (cdr face))))
 
 
+(use-package ob-restclient
+  :ensure t)
+
 (use-package org
   :init
   (setq arthurmco/org-mode-default-scale 1.25)
@@ -37,6 +40,7 @@
    'org-babel-load-languages
    '((latex . t)
      (python . t)
+     (restclient . t)
      (shell . t))))
 
 (use-package org-appear
@@ -72,6 +76,14 @@
   (setq fill-column 100)  
   (set-face-attribute 'variable-pitch nil :font "TeX Gyre Pagella" :height 130))
 
+
+(use-package ox-gfm
+  :ensure t
+  :after org)
+
+(use-package htmlize
+  :after org
+  :ensure t)
 
 (use-package olivetti  
   :ensure t
