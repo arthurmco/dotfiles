@@ -34,14 +34,24 @@
 (use-package nim-mode
   :ensure t)
 
+(use-package nix-mode
+  :ensure t)
+
+(use-package ob-nix
+  :ensure t)
+
 
 (use-package tex
   :ensure auctex
+  :config
+  (TeX-engine-set "luatex")
   :init
   (setq-default TeX-master nil)
   (setq TeX-parse-self t)
   (setq TeX-auto-save t))
 
+(use-package poetry
+ :ensure t)
 
 (provide 'arthurmco-languages)
 

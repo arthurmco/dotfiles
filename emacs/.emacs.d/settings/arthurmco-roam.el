@@ -6,6 +6,11 @@
     :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
     :unnarrowed t))
 
+(defun transform-square-brackets-to-round-ones(string-to-transform)
+  "Transforms [ into ( and ] into ), other chars left unchanged."
+  (concat 
+  (mapcar #'(lambda (c) (if (equal c ?\[) ?\( (if (equal c ?\]) ?\) c))) string-to-transform)))
+
 (use-package org-roam
   :ensure
   :custom
@@ -27,8 +32,16 @@
                 "%?"
                 :if-new (file+head "book/char/${slug}.org"
                                    ,(concat "#+title: ${title}\n"
-                                            "#+filetags: :arthurverse: :character:\n"))
-                :unnarrowed t)))
+                                            "#+filetags: :arthurverse: :character:\n"                                            
+                                            "#+bibliography: ../book-research.bib\n"))
+                :unnarrowed t)
+              `("p" "Protocol" entry (file+headline ,(concat org-roam-directory "/notes.org") "Inbox")
+                "* %^{Title}\nSource: %u, %c\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n\n%?")
+              `("L" "Protocol Link" entry (file+headline ,(concat org-roam-directory "/notes.org") "Inbox")
+                 "* %? [[%:link][%(transform-square-brackets-to-round-ones \"%:description\")]]\n")
+              `("t" "add into list of things to do" plain
+                "** TODO ${title} %T\n%?"
+                :target (file+olp "todo.org" ("Todos")))))
   :bind (("C-c n f" . org-roam-node-find)
          ("C-c n r" . org-roam-node-random)		    
          (:map org-mode-map

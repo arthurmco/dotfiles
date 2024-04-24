@@ -18,11 +18,18 @@
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
 
+
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package))
 
+(eval-when-compile
+  (require 'use-package))
+;(require 'diminish)                ;; if you use :diminish
+(require 'bind-key)                ;; if you use any :bind variant
+
 (add-to-list 'load-path (expand-file-name "settings" (file-name-directory load-file-name)))
+(add-to-list 'exec-path "~/.local/bin")
 
 ;;;
 ;;; Custom options
@@ -48,6 +55,10 @@
 	          tab-width 4
 	          indent-tabs-mode nil)
 
+;(set-frame-parameter (selected-frame) 'alpha-background 80)
+;(add-to-list 'default-frame-alist '(alpha-background . 80))
+;(set-frame-parameter (selected-frame) 'alpha 99)
+;(add-to-list 'default-frame-alist 'alpha 99)
 ;;;
 ;;; Custom keybindings
 ;;;
@@ -55,17 +66,6 @@
 (global-set-key (kbd "M-s") 'replace-string)
 (global-set-key (kbd "C-c r") 'revert-buffer)
 
-
-;;;
-;;; Custom themes
-;;;
-
-(defmacro download-theme (name)
-  `(use-package ,name
-     :if window-system
-     :ensure t))
-
-(download-theme solarized-theme)
 
 ;;;
 ;;; Platform-specific
@@ -83,10 +83,6 @@
 
 (use-package delight
   :ensure t)
-
-(use-package all-the-icons
-  :ensure t
-  :if (display-graphic-p))
 
 (use-package windmove
   :ensure t
@@ -129,17 +125,9 @@
   (setq recentf-max-saved-items 25)
   :bind (("C-c C-r" . recentf-open-files)))
 
-(use-package rainbow-mode
-  :ensure t
-  :hook (css-mode scss-mode))
-
 (use-package emmet-mode
   :ensure t
   :hook (html-mode web-mode))
-
-(use-package rainbow-delimiters
-  :ensure t
-  :hook (c++-mode scheme-mode rust-mode js2-mode racket-mode typescript-mode))
 
 (use-package which-key
   :ensure t)
@@ -161,7 +149,7 @@
   (smex-initialize))
 
 (use-package auto-fill-mode
-  :hook ((markdown-mode LaTeX-mode) . auto-fill-mode))
+  :hook ((markdown-mode LaTeX-mode ConTeXt-mode) . auto-fill-mode))
 
 
 (use-package projectile
@@ -201,14 +189,9 @@
 (use-package ag
   :ensure t)
 
-(use-package all-the-icons-dired
-  :ensure t
-  :if (display-graphic-p)
-  :hook (dired-mode . all-the-icons-dired-mode))
-
-(use-package doom-modeline
-  :ensure t
-  :hook (after-init . doom-modeline-mode))
+(use-package paredit
+  :hook ((scheme-mode emacs-lisp-mode) . paredit-mode)
+  :ensure t)
 
 ;;;
 ;;; Completions, language servers, et al --------------
@@ -218,7 +201,12 @@
   (interactive)
   (tide-setup)
   (setq flycheck-check-syntax-automatically '(save mode-enabled))
-  ;(eldoc-mode +1)
+;;;(eldoc-mode +1)
+  (setq web-mode-enable-auto-quoting nil)
+  (setq web-mode-markup-indent-offset 2)
+  (setq web-mode-code-indent-offset 2)
+  (setq web-mode-attr-indent-offset 2)
+  (setq web-mode-attr-value-indent-offset 2)
   (tide-hl-identifier-mode +1))
 
 (use-package flycheck
@@ -240,11 +228,11 @@
 (use-package company
   :ensure t
   :delight
-  :hook (c++-mode rust-mode python-mode typescript-mode js2-mode))
+  :hook ((c++-mode rust-mode python-mode typescript-mode js2-mode) . company-mode))
 
 (use-package flymake
   :ensure t
-  :hook (c++-mode rust-mode python-mode)
+  :hook ((c++-mode rust-mode python-mode) . flymake-mode)
   :bind (("C-c ! l" . flymake-show-buffer-diagnostics)))
 
 (use-package eglot
@@ -256,38 +244,17 @@
   :config
   (direnv-mode))
 
-;;;
-;;; writing (org and LaTeX) --------------
-;;;
-
 (require 'arthurmco-languages)
-
 (require 'arthurmco-org)
 (require 'arthurmco-roam)
 (require 'arthurmco-dash)
+(require 'arthurmco-visual)
+(require 'arthurmco-mail)
+(require 'arthurmco-utils)
 
-;;; Custom functions
-
-(defun arthurmco/query-on-wiktionary (message)
-  "Query a certain term on wiktionary"
-  (interactive "sTerm: ")
-  (shell-command
-   (format "xdg-open \"https://en.wiktionary.org/w/index.php?search=%s\""
-           (string-replace " " "+" message))))
-    
-
-(defun arthurmco/query-portuguese-lemma (word)
-  "Query a term on a portuguese dictionary"
-  (interactive "sPalavra: ")
-  (shell-command
-   (format "xdg-open \"https://michaelis.uol.com.br/busca?r=0&f=0&t=0&palavra=%s\""
-           (string-replace " " "+" word))))
-
-
-(defun arthurmco/query-synonym (word)
-  "Query a term on a portuguese dictionary"
-  (interactive "sPalavra: ")
-  (shell-command
-   (format "xdg-open \"https://www.sinonimos.com.br/busca.php?q=%s\""
-           (string-replace " " "+" word))))
-
+;;; Mastodon
+(use-package mastodon
+  :config
+  (setq mastodon-instance-url "https://mas.to/"
+        mastodon-active-user "arthurmco")
+  :ensure t)

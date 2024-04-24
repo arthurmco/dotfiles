@@ -33,13 +33,15 @@
   (setq org-startup-indented t
         org-pretty-entities t
         org-hide-emphasis-markers t
-        org-startup-with-inline-images t        
+        org-startup-with-inline-images t
+        org-latex-compiler "lualatex"
         org-image-actual-width '(300))
   (arthurmco/org-mode-font-fixes)
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((latex . t)
      (python . t)
+     (nix . t)
      (restclient . t)
      (shell . t))))
 
@@ -91,6 +93,7 @@
   :hook
   (org-mode . olivetti-mode)
   :custom
-  (olivetti-body-width 70))
+  (olivetti-body-width 85))
+
 
 (provide 'arthurmco-org)

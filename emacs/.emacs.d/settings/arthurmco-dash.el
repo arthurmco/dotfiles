@@ -14,6 +14,9 @@
   (setq dashboard-footer-messages
         '("'Trabalhando e relaxando' -- Jailson Mendes"
           "please use [[https://github.com/viglioni/lauremacs]] instead"
+          "ta TININDOMMMMM"
+          "Você sabe o que quer dizer Malakoi?"
+          "MMMMMMMMMMMMMMMMMEEEEEEEEEUUUUUUUUUUU presidente"
           "Rewrite it in Rust!"
           "apt remove vim"))  
   (setq initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
