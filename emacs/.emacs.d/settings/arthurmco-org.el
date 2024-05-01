@@ -21,6 +21,11 @@
 (use-package ob-restclient
   :ensure t)
 
+(use-package ob-mermaid
+  :ensure t
+  :init
+  (setq ob-mermaid-cli-path "/home/arthurmco/.nix-profile/bin/mmdc"))
+
 (use-package org
   :init
   (setq arthurmco/org-mode-default-scale 1.25)
@@ -34,12 +39,13 @@
         org-pretty-entities t
         org-hide-emphasis-markers t
         org-startup-with-inline-images t
-        org-latex-compiler "lualatex"
+        org-latex-compiler "xelatex"
         org-image-actual-width '(300))
   (arthurmco/org-mode-font-fixes)
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((latex . t)
+     (mermaid . t)
      (python . t)
      (nix . t)
      (restclient . t)

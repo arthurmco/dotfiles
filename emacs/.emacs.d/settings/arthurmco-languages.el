@@ -53,5 +53,10 @@
 (use-package poetry
  :ensure t)
 
+(use-package mermaid-mode
+  :init
+  (setq mermaid-mmdc-location "/home/arthurmco/.nix-profile/bin/mmdc")
+  :ensure t)
+
 (provide 'arthurmco-languages)
 
