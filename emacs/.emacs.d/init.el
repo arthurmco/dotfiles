@@ -228,7 +228,7 @@
 (use-package company
   :ensure t
   :delight
-  :hook ((c++-mode rust-mode python-mode typescript-mode js2-mode) . company-mode))
+  :hook ((c++-mode rust-mode python-mode typescript-mode js2-mode tsx-ts-mode) . company-mode))
 
 (use-package flymake
   :ensure t
@@ -237,7 +237,7 @@
 
 (use-package eglot
   :ensure t
-  :hook (((rust-mode python-mode go-mode) . eglot-ensure)))
+  :hook (((rust-mode python-mode go-mode tsx-ts-mode) . eglot-ensure)))
 
 (use-package direnv
   :ensure t
