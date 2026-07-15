@@ -40,6 +40,7 @@
         org-hide-emphasis-markers t
         org-startup-with-inline-images t
         org-latex-compiler "xelatex"
+        org-preview-latex-default-process 'dvipng
         org-image-actual-width '(300))
   (arthurmco/org-mode-font-fixes)
   (org-babel-do-load-languages

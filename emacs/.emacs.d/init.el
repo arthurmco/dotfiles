@@ -252,6 +252,8 @@
 (require 'arthurmco-mail)
 (require 'arthurmco-utils)
 
+(menu-bar-mode -1)
+
 ;;; Mastodon
 (use-package mastodon
   :config
